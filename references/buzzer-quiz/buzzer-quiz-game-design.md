@@ -64,7 +64,10 @@ setup -> lobby -> [countdown -> question <-> answering -> result] x N -> final
 6. **Result (3 s):** the answer is shown, then the next countdown starts. After the
    last question -> *final*.
 7. **Final:** ranking by score. Rematch keeps the players and settings and starts a new
-   countdown with new questions. "New topics" returns to setup.
+   countdown with new questions. "New topics" returns to setup. A room never gets the
+   same question twice in a session (across rematches, new topics and language
+   switches) until every question of its chosen topics, in its language, has been
+   played; then those questions start a new cycle.
 
 ## Buzz resolution (fairness)
 
@@ -122,6 +125,9 @@ The real type is `QuizState` in `lib/games/buzzerquiz/game.ts`. In short:
   remaining time is kept in `timeLeft` instead.
 - `buzzes` (`{ seat, ms }` for this round), `buzzer`, `struck` (bank choice indexes),
   `locked`, `lastPick`, `outcome`, `scores`.
+- `usedQuestionIds`: every question the room has played this session. `pickQuestions`
+  draws only unseen ones; when the chosen pool runs out, it drops that pool's ids and
+  keeps the new game's, so the list never outgrows the bank.
 
 Choices are bank indexes, where 0 is always the right answer. `choiceOrder(seed,
 index)` shuffles them for display. Arrays are dropped when empty, and `normalize()`

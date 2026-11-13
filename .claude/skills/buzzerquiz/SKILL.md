@@ -20,7 +20,7 @@ out for everyone and its player is locked out of that question. A right pick sco
 
 | Path | What |
 | :--- | :--- |
-| `lib/games/buzzerquiz/game.ts` | The pure state machine (`QuizState`), `advance`, `pickQuestions`, `choiceOrder`, `ranking` |
+| `lib/games/buzzerquiz/game.ts` | The pure state machine (`QuizState`), `advance`, `pickQuestions` (only questions not in the room's `usedQuestionIds`, until the chosen pool runs out), `choiceOrder`, `ranking` |
 | `lib/games/buzzerquiz/constants.ts` | Timings, topics, lengths, players |
 | `lib/games/buzzerquiz/questions.json` | The bank, one question per line; `choices[0]` is always right |
 | `lib/games/buzzerquiz/questions.test.ts` | Validates the bank (lengths, 20 per topic per language, French spacing) |

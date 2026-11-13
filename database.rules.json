@@ -432,6 +432,9 @@
           "questionIds": {
             "$i": { ".validate": "$i.matches(/^1?[0-9]$/) && newData.isString() && newData.val().length >= 1 && newData.val().length <= 40" }
           },
+          "usedQuestionIds": {
+            "$i": { ".validate": "$i.matches(/^[0-9]+$/) && $i.length <= 4 && newData.isString() && newData.val().length >= 1 && newData.val().length <= 40" }
+          },
           "seed": { ".validate": "newData.isNumber()" },
           "index": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 20" },
           "round": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 10" },

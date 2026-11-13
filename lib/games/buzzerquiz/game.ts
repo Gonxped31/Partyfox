@@ -83,6 +83,11 @@ export interface QuizState {
   hands: Partial<Record<SeatId, Card[]>>;
   /** The card each player played on this question, cleared at the next countdown. */
   played: Partial<Record<SeatId, Card>>;
+  /**
+   * Every question the room has played this session, across rematches, so
+   * none comes back until the chosen pool runs out (`pickQuestions`).
+   */
+  usedQuestionIds: string[];
 }
 
 export interface Question {
@@ -108,6 +113,7 @@ export function normalize(game: QuizState): QuizState {
     // A hand comes back from the database as an array or, with gaps, an object; an empty one doesn't come back at all.
     hands: Object.fromEntries(Object.entries(game.hands ?? {}).map(([seat, hand]) => [seat, Object.values(hand ?? {})])),
     played: game.played ?? {},
+    usedQuestionIds: game.usedQuestionIds ?? [],
   };
 }
 
@@ -133,6 +139,7 @@ export function newGame(lang: Lang): QuizState {
     scores: {},
     hands: {},
     played: {},
+    usedQuestionIds: [],
   };
 }
 
@@ -199,13 +206,15 @@ export function backToSetup(state: QuizState): QuizState {
   return { ...game, phase: "setup" };
 }
 
-type StartOpts = { players: SeatId[]; questionIds: string[]; seed: number; now: number; hands?: Partial<Record<SeatId, Card[]>> };
+/** `questionIds` and `usedQuestionIds` come from `pickQuestions`. */
+type StartOpts = { players: SeatId[]; questionIds: string[]; usedQuestionIds: string[]; seed: number; now: number; hands?: Partial<Record<SeatId, Card[]>> };
 
 function startRun(game: QuizState, opts: StartOpts): QuizState {
-  const { players, questionIds, seed, now } = opts;
+  const { players, questionIds, usedQuestionIds, seed, now } = opts;
   if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS) throw new Error(`Needs ${MIN_PLAYERS} to ${MAX_PLAYERS} players.`);
   if (new Set(players).size !== players.length) throw new Error("Duplicate player.");
   if (questionIds.length !== game.settings.length) throw new Error("Wrong number of questions.");
+  if (!questionIds.every((id) => usedQuestionIds.includes(id))) throw new Error("This game's questions must count as seen.");
   const scores: Partial<Record<SeatId, number>> = {};
   for (const seat of players) scores[seat] = 0;
   const hands: Partial<Record<SeatId, Card[]>> = {};
@@ -221,6 +230,7 @@ function startRun(game: QuizState, opts: StartOpts): QuizState {
     phase: "countdown",
     players,
     questionIds,
+    usedQuestionIds,
     seed,
     index: 0,
     round: 0,
@@ -466,22 +476,44 @@ export function choiceOrder(seed: number, index: number): number[] {
   return shuffle([0, 1, 2, 3], seededRandom(seed * 31 + index + 1));
 }
 
-/**
- * Draws `length` questions in the chosen language, spread evenly across the
- * chosen topics, in random order. Throws if the bank is too small.
- */
-export function pickQuestions(bank: readonly Question[], settings: Pick<Settings, "lang" | "topics"> & { length: number }, random: () => number): string[] {
-  const { lang, topics, length } = settings;
-  if (!topics.length) throw new Error("No topics.");
-  const pools = topics.map((topic) => shuffle(bank.filter((q) => q.lang === lang && q.topic === topic), random));
+/** Takes up to `count` questions round-robin across the topic pools, so topics stay even; a pool that runs out is skipped. */
+function drawEvenly(pools: readonly Question[][], count: number): string[] {
   const picked: string[] = [];
-  for (let i = 0; picked.length < length; i++) {
-    const pool = pools[i % pools.length];
-    const round = Math.floor(i / pools.length);
-    if (round < pool.length) picked.push(pool[round].id);
-    else if (pools.every((p) => round >= p.length)) throw new Error("Not enough questions.");
+  for (let round = 0; picked.length < count; round++) {
+    const row = pools.filter((pool) => round < pool.length);
+    if (!row.length) break;
+    for (const pool of row.slice(0, count - picked.length)) picked.push(pool[round].id);
   }
-  return shuffle(picked, random);
+  return picked;
+}
+
+/**
+ * Draws a game's questions in the room's language, spread evenly across the
+ * chosen topics, in random order: only questions the room hasn't seen this
+ * session (`usedQuestionIds`), until the chosen pool (topics and language)
+ * runs out. Then a new cycle starts: the pool's questions are fresh again,
+ * except this game's. Returns the questions and the room's new seen list
+ * (ids no longer in the bank dropped, so it never outgrows the bank).
+ * Throws if the pool is smaller than the game.
+ */
+export function pickQuestions(
+  bank: readonly Question[],
+  game: { settings: Pick<Settings, "lang" | "topics"> & { length: number }; usedQuestionIds?: readonly string[] },
+  random: () => number,
+): { questionIds: string[]; usedQuestionIds: string[] } {
+  const { lang, topics, length } = game.settings;
+  if (!topics.length) throw new Error("No topics.");
+  const known = new Set(bank.map((q) => q.id));
+  const used = new Set((game.usedQuestionIds ?? []).filter((id) => known.has(id)));
+  const pools = topics.map((topic) => bank.filter((q) => q.lang === lang && q.topic === topic));
+  const picked = drawEvenly(pools.map((pool) => shuffle(pool.filter((q) => !used.has(q.id)), random)), length);
+  if (picked.length === length) return { questionIds: shuffle(picked, random), usedQuestionIds: [...used, ...picked] };
+  // The pool ran out mid-game: a new cycle, where everything this game hasn't already drawn is fresh again.
+  const taken = new Set(picked);
+  picked.push(...drawEvenly(pools.map((pool) => shuffle(pool.filter((q) => !taken.has(q.id)), random)), length - picked.length));
+  if (picked.length < length) throw new Error("Not enough questions.");
+  const inPool = new Set(pools.flat().map((q) => q.id));
+  return { questionIds: shuffle(picked, random), usedQuestionIds: [...[...used].filter((id) => !inPool.has(id)), ...picked] };
 }
 
 /** Final ranking: by score, ties share a rank (1, 1, 3). */

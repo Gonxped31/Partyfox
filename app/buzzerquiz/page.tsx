@@ -114,7 +114,7 @@ export default function BuzzerQuizPage() {
     transact((current) => {
       const g = normalize(current);
       const players = startingSeats(session);
-      const opts = { players, questionIds: pickQuestions(QUESTIONS, g.settings, Math.random), seed: randomSeed(), now: serverNow(), hands: g.settings.cards ? dealHands(players, Math.random) : undefined };
+      const opts = { players, ...pickQuestions(QUESTIONS, g, Math.random), seed: randomSeed(), now: serverNow(), hands: g.settings.cards ? dealHands(players, Math.random) : undefined };
       return fromFinal ? rematch(g, opts) : start(g, opts);
     });
 

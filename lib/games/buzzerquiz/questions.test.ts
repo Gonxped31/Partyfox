@@ -37,8 +37,20 @@ describe("questions.json", () => {
     for (const lang of ["en", "fr"] as const) {
       for (const topic of TOPICS) {
         expect(QUESTIONS.filter((q) => q.lang === lang && q.topic === topic).length, `${lang} ${topic}`).toBeGreaterThanOrEqual(LONGEST_GAME);
-        expect(() => pickQuestions(QUESTIONS, { lang, topics: [topic], length: LONGEST_GAME }, Math.random)).not.toThrow();
+        expect(() => pickQuestions(QUESTIONS, { settings: { lang, topics: [topic], length: LONGEST_GAME } }, Math.random)).not.toThrow();
       }
+    }
+  });
+
+  it("names each question <topic>-<lang>-<number>", () => {
+    const prefix: Record<string, string> = { geography: "geo", cinema: "cin", science: "sci", sport: "spo", music: "mus", history: "his" };
+    for (const q of QUESTIONS) expect(q.id).toMatch(new RegExp(`^${prefix[q.topic]}-${q.lang}-[0-9]{2,3}$`));
+  });
+
+  it("never asks the same question twice in a language", () => {
+    for (const lang of ["en", "fr"] as const) {
+      const texts = QUESTIONS.filter((q) => q.lang === lang).map((q) => q.question.toLowerCase());
+      expect(texts.filter((text, i) => texts.indexOf(text) !== i), lang).toEqual([]);
     }
   });
 

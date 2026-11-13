@@ -12,6 +12,7 @@ import { continueAfterReveal, lockIn as ccLockIn, newGame as newCcGame } from "@
 import { CASES, getCase } from "@/lib/games/cocounsel/cases";
 import { giveUpOnMissingResults, newGame as newNhGame, type RunResult, setOptions, setReady, submitResult } from "@/lib/games/nighthighway/game";
 import * as quiz from "@/lib/games/buzzerquiz/game";
+import { QUESTIONS } from "@/lib/games/buzzerquiz/questions";
 import * as ws from "@/lib/games/wordscramble/game";
 import * as race from "@/lib/games/borderrun/race";
 import { shortestPath } from "@/lib/games/borderrun/route";
@@ -329,7 +330,7 @@ describe("Buzzer Quiz", () => {
     game = await write(quiz.toggleTopic(quiz.toggleTopic(game, "music"), "science"));
     game = await write(quiz.setLength(quiz.setLang(game, "en"), 5));
     game = await write(quiz.toLobby(game));
-    game = await write(quiz.start(game, { players: ["p1", "p2", "p3"], questionIds: ids, seed: 12345, now: t }));
+    game = await write(quiz.start(game, { players: ["p1", "p2", "p3"], questionIds: ids, usedQuestionIds: ids, seed: 12345, now: t }));
     // Question 1: two buzz, the faster wins and answers wrong; the next answers right.
     t += COUNTDOWN_MS;
     game = await write(quiz.reveal(game, t));
@@ -368,9 +369,16 @@ describe("Buzzer Quiz", () => {
     }
     expect(game.phase).toBe("final");
     expect(game.scores).toEqual({ p1: 0, p2: 0, p3: 2 });
-    game = await write(quiz.rematch(game, { players: ["p1", "p2", "p3", "p4"], questionIds: ids, seed: 9, now: t }));
+    const more = ids.map((id) => `${id}-b`);
+    game = await write(quiz.rematch(game, { players: ["p1", "p2", "p3", "p4"], questionIds: more, usedQuestionIds: [...ids, ...more], seed: 9, now: t }));
     game = await write(quiz.newTopics({ ...game, phase: "final" }));
     expect(game.phase).toBe("setup");
+    expect(quiz.normalize(game).usedQuestionIds).toEqual([...ids, ...more]);
+  });
+
+  it("accepts a seen list as long as the whole question bank", async () => {
+    const usedQuestionIds = QUESTIONS.map((q) => q.id);
+    await assertSucceeds(dbAs(env, "alice").ref(path).set(buzzerquizState({ usedQuestionIds })));
   });
 
   it.each([
@@ -391,6 +399,9 @@ describe("Buzzer Quiz", () => {
     ["an outcome without its reason", buzzerquizState({ outcome: { kind: "none" } })],
     ["a negative score", buzzerquizState({ scores: { p1: -1 } })],
     ["a missing seed", { phase: "setup", settings: { lang: "en", length: 10 }, index: 0, round: 0 }],
+    ["a seen question that isn't an id", buzzerquizState({ usedQuestionIds: [7] })],
+    ["a seen question id over 40 characters", buzzerquizState({ usedQuestionIds: ["x".repeat(41)] })],
+    ["a seen list longer than any bank", buzzerquizState({ usedQuestionIds: { "10000": "geo-en-01" } })],
     ["an unknown key", buzzerquizState({ host: "p1" })],
   ])("rejects %s", async (_, state) => {
     await assertFails(dbAs(env, "alice").ref(path).set(state));
@@ -403,7 +414,7 @@ describe("Buzzer Quiz", () => {
     let t = 1_000_000;
     let game = await write(quiz.toLobby(quiz.setCards(quiz.setLength(quiz.toggleTopic(quiz.newGame("en"), "science"), 5), true)));
     const hands = { p1: ["freeze", "double", "steal"], p2: ["fifty", "steal", "shield"] } as const;
-    game = await write(quiz.start(game, { players: ["p1", "p2"], questionIds: ids, seed: 1, now: t, hands: { p1: [...hands.p1], p2: [...hands.p2] } }));
+    game = await write(quiz.start(game, { players: ["p1", "p2"], questionIds: ids, usedQuestionIds: ids, seed: 1, now: t, hands: { p1: [...hands.p1], p2: [...hands.p2] } }));
     game = await write(quiz.playCard(game, "p1", "double", t + 100));
     game = await write(quiz.playCard(game, "p2", "steal", t + 200));
     t += COUNTDOWN_MS;

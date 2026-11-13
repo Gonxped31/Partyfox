@@ -37,13 +37,15 @@ import {
 
 const T0 = 1_000_000;
 const ids = (n: number) => Array.from({ length: n }, (_, i) => `q${i}`);
+/** A game's questions as `pickQuestions` returns them, for a room that had seen none. */
+const drawn = (n: number) => ({ questionIds: ids(n), usedQuestionIds: ids(n) });
 
 function lobby(): QuizState {
   return toLobby(setLength(toggleTopic(newGame("en"), "science"), 5));
 }
 
 function started(players = ["p1", "p2", "p3"]): QuizState {
-  return start(lobby(), { players, questionIds: ids(5), seed: 7, now: T0 });
+  return start(lobby(), { players, ...drawn(5), seed: 7, now: T0 });
 }
 
 /** A question open for buzzing, revealed at T0 + COUNTDOWN_MS. */
@@ -104,14 +106,14 @@ describe("start", () => {
   });
 
   it("needs 2 to 4 distinct players and the right number of questions", () => {
-    expect(() => start(lobby(), { players: ["p1"], questionIds: ids(5), seed: 1, now: T0 })).toThrow();
-    expect(() => start(lobby(), { players: ["p1", "p2", "p3", "p4", "p5"], questionIds: ids(5), seed: 1, now: T0 })).toThrow();
-    expect(() => start(lobby(), { players: ["p1", "p1"], questionIds: ids(5), seed: 1, now: T0 })).toThrow();
-    expect(() => start(lobby(), { players: ["p1", "p2"], questionIds: ids(4), seed: 1, now: T0 })).toThrow();
+    expect(() => start(lobby(), { players: ["p1"], ...drawn(5), seed: 1, now: T0 })).toThrow();
+    expect(() => start(lobby(), { players: ["p1", "p2", "p3", "p4", "p5"], ...drawn(5), seed: 1, now: T0 })).toThrow();
+    expect(() => start(lobby(), { players: ["p1", "p1"], ...drawn(5), seed: 1, now: T0 })).toThrow();
+    expect(() => start(lobby(), { players: ["p1", "p2"], ...drawn(4), seed: 1, now: T0 })).toThrow();
   });
 
   it("only starts from the lobby", () => {
-    expect(() => start(newGame("en"), { players: ["p1", "p2"], questionIds: ids(10), seed: 1, now: T0 })).toThrow();
+    expect(() => start(newGame("en"), { players: ["p1", "p2"], ...drawn(10), seed: 1, now: T0 })).toThrow();
   });
 });
 
@@ -273,16 +275,30 @@ describe("next, final and rematch", () => {
 
   it("rematch keeps the settings and resets the scores", () => {
     const final = { ...started(), phase: "final" as const, scores: { p1: 5, p2: 3, p3: 1 } };
-    const g = rematch(final, { players: ["p1", "p2"], questionIds: ids(5), seed: 9, now: T0 });
+    const g = rematch(final, { players: ["p1", "p2"], ...drawn(5), seed: 9, now: T0 });
     expect(g).toMatchObject({ phase: "countdown", index: 0, scores: { p1: 0, p2: 0 }, seed: 9 });
     expect(g.settings.topics).toEqual(["science"]);
-    expect(() => rematch(started(), { players: ["p1", "p2"], questionIds: ids(5), seed: 9, now: T0 })).toThrow();
+    expect(() => rematch(started(), { players: ["p1", "p2"], ...drawn(5), seed: 9, now: T0 })).toThrow();
   });
 
-  it("New topics goes back to setup", () => {
+  it("rematch records the room's seen questions, and refuses a game whose questions aren't in them", () => {
+    const final = { ...started(), phase: "final" as const };
+    const used = [...ids(5), "r0", "r1", "r2", "r3", "r4"];
+    expect(rematch(final, { players: ["p1", "p2"], questionIds: used.slice(5), usedQuestionIds: used, seed: 9, now: T0 }).usedQuestionIds).toEqual(used);
+    expect(() => rematch(final, { players: ["p1", "p2"], questionIds: used.slice(5), usedQuestionIds: ids(5), seed: 9, now: T0 })).toThrow("seen");
+  });
+
+  it("New topics goes back to setup, still remembering the questions played", () => {
     const g = newTopics({ ...started(), phase: "final" });
     expect(g.phase).toBe("setup");
     expect(g.deadline).toBeUndefined();
+    expect(g.usedQuestionIds).toEqual(ids(5));
+    expect(backToSetup(toLobby(setLang(g, "fr"))).usedQuestionIds).toEqual(ids(5));
+  });
+
+  it("reads a stored game without a seen list as one that has seen nothing", () => {
+    const { usedQuestionIds: _, ...stored } = newGame("en");
+    expect(normalize(stored as QuizState).usedQuestionIds).toEqual([]);
   });
 });
 
@@ -327,21 +343,78 @@ describe("questions", () => {
     q("fr0", "science", "fr"),
   ];
   const random = () => 0.42;
+  const settings = (lang: Question["lang"], topics: Question["topic"][], length: number) => ({ lang, topics, length });
 
   it("draws evenly across topics, in the chosen language only", () => {
-    const picked = pickQuestions(bank, { lang: "en", topics: ["science", "music"], length: 4 }, random);
-    expect(picked).toHaveLength(4);
-    expect(picked.filter((id) => id.startsWith("m"))).toHaveLength(2);
-    expect(picked).not.toContain("fr0");
+    const { questionIds } = pickQuestions(bank, { settings: settings("en", ["science", "music"], 4) }, random);
+    expect(questionIds).toHaveLength(4);
+    expect(questionIds.filter((id) => id.startsWith("m"))).toHaveLength(2);
+    expect(questionIds).not.toContain("fr0");
   });
 
   it("tops up from the bigger topic when a smaller one runs out", () => {
-    const picked = pickQuestions(bank, { lang: "en", topics: ["science", "music"], length: 5 }, random);
-    expect(new Set(picked).size).toBe(5);
+    const { questionIds } = pickQuestions(bank, { settings: settings("en", ["science", "music"], 5) }, random);
+    expect(new Set(questionIds).size).toBe(5);
   });
 
   it("throws when the bank is too small", () => {
-    expect(() => pickQuestions(bank, { lang: "fr", topics: ["science"], length: 5 }, random)).toThrow();
+    expect(() => pickQuestions(bank, { settings: settings("fr", ["science"], 5) }, random)).toThrow();
+  });
+
+  it("adds the game's questions to what the room has seen", () => {
+    const first = pickQuestions(bank, { settings: settings("en", ["science"], 2) }, Math.random);
+    expect([...first.usedQuestionIds].sort()).toEqual([...first.questionIds].sort());
+    const second = pickQuestions(bank, { settings: settings("en", ["science"], 2), usedQuestionIds: first.usedQuestionIds }, Math.random);
+    expect(second.usedQuestionIds).toEqual([...first.usedQuestionIds, ...second.usedQuestionIds.slice(2)]);
+    expect(second.questionIds.every((id) => second.usedQuestionIds.includes(id))).toBe(true);
+  });
+
+  it("never repeats a question until the chosen pool runs out, then starts a new cycle", () => {
+    // 6 science questions, 4 per game: games 1 and 2 cover all 6, game 2 starting the next cycle.
+    const first = pickQuestions(bank, { settings: settings("en", ["science"], 4) }, Math.random);
+    const second = pickQuestions(bank, { settings: settings("en", ["science"], 4), usedQuestionIds: first.usedQuestionIds }, Math.random);
+    const fresh = second.questionIds.filter((id) => !first.questionIds.includes(id));
+    expect(fresh).toHaveLength(2);
+    expect(new Set(second.questionIds).size).toBe(4);
+    // The new cycle counts game 2 as seen, so game 3 starts with the 2 science questions game 2 didn't play.
+    expect([...second.usedQuestionIds].sort()).toEqual([...second.questionIds].sort());
+    const third = pickQuestions(bank, { settings: settings("en", ["science"], 4), usedQuestionIds: second.usedQuestionIds }, Math.random);
+    const left = bank.filter((q) => q.lang === "en" && q.topic === "science" && !second.questionIds.includes(q.id)).map((q) => q.id);
+    expect(third.questionIds).toEqual(expect.arrayContaining(left));
+  });
+
+  it("keeps a new cycle to the chosen pool: other topics and languages stay seen", () => {
+    const used = ["m0", "fr0", "s0", "s1", "s2", "s3", "s4", "s5"];
+    const { questionIds, usedQuestionIds } = pickQuestions(bank, { settings: settings("en", ["science"], 3), usedQuestionIds: used }, Math.random);
+    expect(questionIds.every((id) => id.startsWith("s"))).toBe(true);
+    expect(usedQuestionIds.slice(0, 2)).toEqual(["m0", "fr0"]);
+    expect(usedQuestionIds.slice(2).sort()).toEqual([...questionIds].sort());
+  });
+
+  it("draws from the room's language: a switch uses that language's pool and remembers both", () => {
+    const en = pickQuestions(bank, { settings: settings("en", ["science"], 2) }, Math.random);
+    const fr = pickQuestions(bank, { settings: settings("fr", ["science"], 1), usedQuestionIds: en.usedQuestionIds }, Math.random);
+    expect(fr.questionIds).toEqual(["fr0"]);
+    expect(fr.usedQuestionIds).toEqual([...en.usedQuestionIds, "fr0"]);
+    const back = pickQuestions(bank, { settings: settings("en", ["science"], 4), usedQuestionIds: fr.usedQuestionIds }, Math.random);
+    expect(back.questionIds.some((id) => en.questionIds.includes(id))).toBe(false);
+  });
+
+  it("forgets ids that are no longer in the bank", () => {
+    const { usedQuestionIds } = pickQuestions(bank, { settings: settings("en", ["music"], 1), usedQuestionIds: ["gone"] }, Math.random);
+    expect(usedQuestionIds).not.toContain("gone");
+  });
+
+  it("never repeats a question across rematches in one room, until every question of the pool is played", () => {
+    const pool = bank.filter((q) => q.lang === "en" && q.topic === "science").map((q) => q.id);
+    let game: QuizState = toLobby(setLength(toggleTopic(newGame("en"), "science"), 5));
+    game = start(game, { players: ["p1", "p2"], ...pickQuestions(bank, game, Math.random), seed: 1, now: T0 });
+    const seen = [...game.questionIds];
+    const final: QuizState = { ...game, phase: "final" };
+    game = rematch(final, { players: ["p1", "p2"], ...pickQuestions(bank, final, Math.random), seed: 2, now: T0 });
+    // 6 questions in the pool, 5 per game: the rematch plays the one left first, then starts a new cycle.
+    expect(game.questionIds).toContain(pool.find((id) => !seen.includes(id)));
+    expect(new Set(game.questionIds).size).toBe(5);
   });
 
   it("shuffles choices the same way on every device, differently per question", () => {
@@ -363,7 +436,7 @@ describe("publicGame", () => {
 describe("Power cards", () => {
   const hands = { p1: ["freeze", "double", "steal"], p2: ["fifty", "steal", "shield"], p3: ["double", "shield", "freeze"] } as const;
   const withCards = (): QuizState =>
-    start(setCards(lobby(), true), { players: ["p1", "p2", "p3"], questionIds: ids(5), seed: 7, now: T0, hands: { p1: [...hands.p1], p2: [...hands.p2], p3: [...hands.p3] } });
+    start(setCards(lobby(), true), { players: ["p1", "p2", "p3"], ...drawn(5), seed: 7, now: T0, hands: { p1: [...hands.p1], p2: [...hands.p2], p3: [...hands.p3] } });
   /** Plays cards during the countdown, then reveals the question at T0 + COUNTDOWN_MS. */
   const openWith = (plays: [string, Card][]): { game: QuizState; at: number } => {
     let game = withCards();
@@ -391,7 +464,7 @@ describe("Power cards", () => {
       expect(new Set(hand).size).toBe(HAND_SIZE);
     }
     expect(withCards().hands.p1).toEqual(["freeze", "double", "steal"]);
-    expect(() => start(setCards(lobby(), true), { players: ["p1", "p2"], questionIds: ids(5), seed: 7, now: T0 })).toThrow("hand");
+    expect(() => start(setCards(lobby(), true), { players: ["p1", "p2"], ...drawn(5), seed: 7, now: T0 })).toThrow("hand");
     expect(started().hands).toEqual({});
   });
 
