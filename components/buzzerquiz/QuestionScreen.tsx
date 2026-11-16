@@ -181,6 +181,9 @@ export default function QuestionScreen({ view, onBuzz, onPick, onPlay }: { view:
     caption = t.buzzedCaption;
   }
 
+  // The phone dock (below): only while this player can buzz, or is about to (frozen, or the buzz just sent).
+  const docked = playing && (phase === "question" || phase === "buzzing") && !lockedOut;
+
   const timer = (
     <TimerRing
       seconds={view.questionSeconds}
@@ -226,13 +229,21 @@ export default function QuestionScreen({ view, onBuzz, onPick, onPlay }: { view:
                 </li>
               ))}
             </ul>
-            <div className="mt-2 flex min-h-[200px] flex-col items-center justify-center gap-3">
+            {/* On a phone, while this player can buzz, the buzzer docks at the bottom of the screen (sticky, like
+                Same Page's hand), so a long question never pushes it out of reach (T-3xy9). While someone answers,
+                or once this player is locked out, it goes back into the page so it never covers the choices. */}
+            <div
+              className={`mt-2 flex min-h-[200px] flex-col items-center justify-center gap-3 short-phone:min-h-[176px] ${
+                docked
+                  ? "max-[899px]:sticky max-[899px]:bottom-0 max-[899px]:z-10 max-[899px]:-mx-4 max-[899px]:bg-[var(--stage)] max-[899px]:px-4 max-[899px]:pt-3 max-[899px]:pb-[max(12px,env(safe-area-inset-bottom))] max-[899px]:shadow-[0_-12px_12px_-4px_var(--stage)]"
+                  : ""
+              }`}
+            >
               {phase === "result" ? (
                 <NextPill text={view.index + 1 >= view.total ? t.resultsIn(view.nextSeconds) : t.nextQuestionIn(view.nextSeconds)} />
               ) : playing ? (
                 <>
                   <Buzzer state={buzzerState} caption={caption} onBuzz={onBuzz} small={banner != null} />
-                  {view.cards ? <PowerHand hand={view.cards.hand} canPlay={view.cards.canPlay} freezeOk={false} onPlay={onPlay} /> : null}
                   <p className={`${TEXT} m-0 hidden items-center gap-2 text-[14px] text-[var(--text-muted)] min-[900px]:flex`}>
                     {t.keysPress} <kbd className="rounded-md border-2 border-[var(--text-muted)] px-1.5 font-bold">{t.keysSpace}</kbd> {t.keysThen}{" "}
                     <kbd className="rounded-md border-2 border-[var(--text-muted)] px-1.5 font-bold">A–D</kbd>
@@ -242,6 +253,12 @@ export default function QuestionScreen({ view, onBuzz, onPick, onPlay }: { view:
                 <p className={`${TEXT} m-0 rounded-2xl bg-[var(--surface)] px-4 py-3 text-[16px] font-bold text-[var(--text-muted)]`}>{t.watching}</p>
               )}
             </div>
+            {/* After the dock, so a dock with the cards in it doesn't take half a short phone's screen. */}
+            {phase !== "result" && playing && view.cards ? (
+              <div className="flex justify-center">
+                <PowerHand hand={view.cards.hand} canPlay={view.cards.canPlay} freezeOk={false} onPlay={onPlay} />
+              </div>
+            ) : null}
           </main>
         </div>
       </div>

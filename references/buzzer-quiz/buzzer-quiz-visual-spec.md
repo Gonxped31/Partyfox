@@ -63,6 +63,7 @@ Load: `Bricolage Grotesque` (opsz 12–96, weights 700, 800) and `Atkinson Hyper
 - **Disabled (someone else is answering):** face `--disabled`, ring `--disabled-ring`, label "WAIT" in `--text-muted`, caption "Léa is answering".
 - **Locked (you answered wrong):** same grey, lock icon above the label "LOCKED", caption "The others can still buzz".
 - Desktop: the buzzer sits under the choices with a key hint: "Press Space or click to buzz" and "Then pick with A–D". Keys are drawn as `<kbd>` with a 2 px `--text-muted` border.
+- Phone: while the player can buzz, the buzzer area docks at the bottom of the screen (sticky, `--stage` fill, a soft fade above it), so a long question never pushes it out of reach; the question and choices scroll above it. While someone answers, or once the player is locked out, it goes back under the choices. On short phones (under 760 px tall) the buzzer is 136 px; "BUZZ" keeps 38 px, the grey faces drop to 28 px. Power cards sit under the buzzer area, outside the dock.
 - Reserve space beside the buzzer for the v2 power cards. Don't draw them yet.
 
 ### Choice tile

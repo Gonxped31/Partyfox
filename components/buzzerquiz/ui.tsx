@@ -197,11 +197,17 @@ export function Segmented<T extends string | number>({ label, options, value, on
 
 export type BuzzerState = "ready" | "pressed" | "wait" | "locked";
 
-/** The big red buzzer. "wait" and "locked" are grey and disabled. */
+/**
+ * The big red buzzer. "wait" and "locked" are grey and disabled. On a short
+ * phone it's 136 px, so it and the question fit (T-3xy9). The white BUZZ on red
+ * keeps 38 px (the spec's contrast floor); the grey faces' longer words
+ * (LOCKED, BLOQUÉ, PAUSE) drop to 28 px to fit.
+ */
 export function Buzzer({ state, caption, onBuzz, small = false }: { state: BuzzerState; caption: string; onBuzz: () => void; small?: boolean }) {
   const t = useText(WORDS);
   const off = state === "wait" || state === "locked";
-  const size = small ? 152 : 176;
+  const size = small ? "size-[152px] text-[38px]" : "size-[176px] text-[42px]";
+  const shortSize = off ? "short-phone:size-[136px] short-phone:text-[28px]" : "short-phone:size-[136px] short-phone:text-[38px]";
   return (
     <div className="flex flex-col items-center gap-3">
       <button
@@ -218,14 +224,11 @@ export function Buzzer({ state, caption, onBuzz, small = false }: { state: Buzze
             onBuzz();
           }
         }}
-        className={`${DISPLAY} ${FOCUS} relative flex cursor-pointer touch-manipulation select-none flex-col items-center justify-center rounded-full font-extrabold transition-transform duration-[80ms] disabled:cursor-default motion-reduce:transition-none`}
+        className={`${DISPLAY} ${FOCUS} ${size} ${shortSize} relative flex cursor-pointer touch-manipulation select-none flex-col items-center justify-center rounded-full font-extrabold transition-transform duration-[80ms] disabled:cursor-default motion-reduce:transition-none`}
         style={{
-          width: size,
-          height: size,
           background: off ? "var(--disabled)" : "var(--buzz)",
           border: `10px solid ${off ? "var(--disabled-ring)" : "var(--buzz-ring)"}`,
           color: off ? "var(--text-muted)" : "#FFFFFF",
-          fontSize: small ? 38 : 42,
           transform: state === "pressed" ? "translateY(6px)" : undefined,
           boxShadow: off ? "0 6px 0 var(--disabled-ring)" : state === "pressed" ? "0 3px 0 var(--buzz-base)" : "0 10px 0 var(--buzz-base), 0 0 0 10px rgba(255,75,62,.16)",
         }}

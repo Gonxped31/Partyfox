@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* A short phone (iPhone SE: 375x667, less with Safari's bars): the phone
+   layout, under the games' 900px breakpoint, with little height to spare. */
+@custom-variant short-phone (@media (max-width: 899px) and (max-height: 760px));
+
 :root {
   --table: #128a94;
 }
