@@ -12,11 +12,11 @@ import { GAME_TITLE } from "@/lib/games/ftw/constants";
 import {
   contentLang,
   type CurrentRound,
+  finishedSessionId,
   lockIn,
   masterOf,
   newGame,
   nextRound as advanceRound,
-  revealedRoundId,
   setLang,
   setPlaced,
   setPrompt,
@@ -59,10 +59,9 @@ export default function SamePagePage() {
     document.title = placing || (status === "REVEALED" && me) ? t.yourTurnTitle(GAME_TITLE) : GAME_TITLE;
   }, [placing, status, me, t]);
 
-  // Same Page has no final result (rounds go on as long as the players like),
-  // so each revealed round is reported as a finished game, by both seated players.
-  const roundId = game && me && bothJoined ? revealedRoundId(game) : null;
-  useReportFinished(roundId ? { slug: "ftw", mode: "room", id: roundId, room, players: 2, lang: roomLang } : null);
+  // A session is one finished game, reported by both seated players once its first round is revealed.
+  const sessionId = game && me && bothJoined ? finishedSessionId(game) : null;
+  useReportFinished(sessionId ? { slug: "ftw", mode: "room", id: sessionId, room, players: 2, lang: roomLang } : null);
 
   const handleLockIn = (order: string[]) => transact((current) => lockIn(current, order));
   const handleSubmitGuess = (order: string[]) => transact((current) => submitGuess(current, order));

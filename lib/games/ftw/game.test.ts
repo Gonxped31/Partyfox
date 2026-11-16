@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { pruneLikeFirebase, undefinedPaths } from "@/lib/store/firebaseShape";
-import { addUsedPrompt, contentLang, guesserOf, lockIn, makeRound, masterOf, newGame, nextRound, revealedRoundId, setLang, setPlaced, setPrompt, setTopics, submitGuess } from "./game";
+import { addUsedPrompt, contentLang, finishedSessionId, guesserOf, lockIn, makeRound, masterOf, newGame, nextRound, revealedRoundId, setLang, setPlaced, setPrompt, setTopics, submitGuess } from "./game";
 import { BANKS, randomRound } from "./prompts";
 
 const LABELS = ["Pepperoni", "Mushrooms", "Pineapple", "Anchovies", "Jalapenos"];
@@ -371,5 +371,28 @@ describe("revealedRoundId", () => {
     const other = newGame(makeRound("Breakfasts", LABELS));
     const c = revealedRoundId(submitGuess(lockIn(other, ids), ids));
     expect(new Set([a, b, c]).size).toBe(3);
+  });
+});
+
+describe("finishedSessionId", () => {
+  it("is the first round's id once it's revealed, and null for every later round", () => {
+    const game = freshGame();
+    const ids = game.current.items.map((i) => i.id);
+    expect(finishedSessionId(game)).toBeNull();
+    const first = submitGuess(lockIn(game, ids), ids);
+    expect(finishedSessionId(first)).toBe(revealedRoundId(first));
+    const second = nextRound(first, makeRound("Breakfasts", LABELS));
+    const ids2 = second.current.items.map((i) => i.id);
+    expect(finishedSessionId(submitGuess(lockIn(second, ids2), ids2))).toBeNull();
+  });
+
+  it("is new after Reset game, which starts a new session", () => {
+    const game = freshGame();
+    const ids = game.current.items.map((i) => i.id);
+    const before = finishedSessionId(submitGuess(lockIn(game, ids), ids));
+    const reset = newGame(makeRound("Breakfasts", LABELS));
+    const after = finishedSessionId(submitGuess(lockIn(reset, ids), ids));
+    expect(after).not.toBeNull();
+    expect(after).not.toBe(before);
   });
 });

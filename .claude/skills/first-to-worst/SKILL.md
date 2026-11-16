@@ -45,8 +45,9 @@ sizing and motion) and `prompts.md` (the prompt bank's shape, checks and convent
 - **Content language** `lang?` (`'en'|'fr'`, absent = en: `contentLang`): the bank
   prompts are drawn from. `setLang` is master only; a new room starts in the
   creator's interface language. The interface follows each viewer's page language.
-- **Finished games**: each revealed round reports one (`useReportFinished`,
-  `docs/tracking.md`); Same Page has no final result.
+- **Finished games**: a session (until Reset game) reports one, when its first
+  round is revealed (`finishedSessionId`, `docs/tracking.md`); Same Page has no
+  final result.
 - **Live placement progress** (`current.placed`): the IDs of the filled slots, **never
   the numbers**, because the other player can read the room.
 - **Its shape is validated by `database.rules.json`** (the `ftw` node).

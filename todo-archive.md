@@ -67,3 +67,4 @@ T-050 | 3 | - | S | full-stack | Drop the always-empty names field from WithIden
 T-mke2 | 2 | - | L | buzzerquiz | Buzzer Quiz: more questions, and never the same question twice in a room session (across rematches) | done 2026-11-16
 T-qr8x | 2 | - | S | devops | todo.test.ts migrate tests time out on Windows (5-6 s against the 5 s default), so check.mjs fails on main | done 2026-11-16
 T-qkje | 2 | - | S | cocounsel | Co-Counsel: How to play says the case ends after the 3rd miss, the code ends it ON the 3rd: make the rule and the text agree | done 2026-11-16
+T-sje7 | 2 | - | S | ftw,admin | Same Page: decide what counts as one finished game (today every revealed round counts, inflating its share of games finished per week) | done 2026-11-16

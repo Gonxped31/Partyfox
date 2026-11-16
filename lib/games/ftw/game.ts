@@ -131,17 +131,26 @@ function fingerprint(text: string): string {
 
 /**
  * The id of the round on show once it's REVEALED (its result), else null: the
- * same on every device, for the "game finished" report (lib/tracking). Same
- * Page has no final result - rounds go on as long as the players like - so
- * each revealed round counts. The round number alone would repeat after
- * Reset game, so a fingerprint of what was played (the prompt and both
- * orders) goes with it. Letters, digits and "-" only.
+ * same on every device. The round number alone would repeat after Reset game,
+ * so a fingerprint of what was played (the prompt and both orders) goes with
+ * it. Letters, digits and "-" only.
  */
 export function revealedRoundId(game: GameState): string | null {
   const { current } = game;
   if (current.status !== "REVEALED") return null;
   const played = [current.prompt, ...(current.masterOrder ?? []), "|", ...(current.guessOrder ?? [])].join("\n");
   return `r${game.round}-${fingerprint(played)}`;
+}
+
+/**
+ * The session's id for the "game finished" report (lib/tracking), else null.
+ * Same Page has no final result (rounds go on as long as the players like),
+ * so a session counts as one game, reported once its first round is revealed;
+ * later rounds report nothing, and Reset game starts a new session (the
+ * user's call, 2026-11-16, T-sje7). The id is that first round's.
+ */
+export function finishedSessionId(game: GameState): string | null {
+  return game.round === 1 ? revealedRoundId(game) : null;
 }
 
 /**

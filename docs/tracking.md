@@ -75,9 +75,10 @@ finished/players/{gameKey}_{uid}     { game: gameKey, uid, src, cmp?, at }   one
 
 ## What counts as a game finished
 
-A game reports once it reaches its **real end**: a match result or revealed
-round (Same Page), a solved case (Co-Counsel), a race's final standings, a final
-score, a solo game won or lost. Abandoned games never report. Every seated
+A game reports once it reaches its **real end**: a match result, a solved case
+(Co-Counsel), a race's final standings, a final score, a solo game won or lost.
+Same Page has no end, so a session (until Reset game) counts once, when its
+first round is revealed (`finishedSessionId`). Abandoned games never report. Every seated
 device calls `useReportFinished(game)` (`lib/tracking/useReportFinished.ts`):
 the header makes it one game, and each device adds its own participation. A
 device also remembers the games it reported (localStorage `partyfox.finished`),
