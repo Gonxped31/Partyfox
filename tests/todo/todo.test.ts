@@ -97,7 +97,10 @@ describe("the queue", () => {
   });
 });
 
-describe("migrate", () => {
+/** These run real git repos: one case takes 5-7 s on Windows, over vitest's 5 s default (T-qr8x). */
+const GIT_HEAVY = { timeout: 30_000 };
+
+describe("migrate", GIT_HEAVY, () => {
   it("turns todo.md and its detail files into one file per todo", () => {
     const root = scratch();
     write(root, "todo.md", "# ID | P(1-3) | dep | size(S/M/L/-) | tags(a,b or -) | description\nT-016 | 3 | - | S | infra | Second Firebase project\nT-017 | 3 | T-016 | S | frontend | Real iPhone check\n");
@@ -214,7 +217,7 @@ describe("migrate", () => {
   });
 });
 
-describe("parallel worktrees", () => {
+describe("parallel worktrees", GIT_HEAVY, () => {
   it("two branches adding and finishing todos rebase without conflicts", () => {
     const dir = repo();
     todo(dir, ["add", "shared one"], ["aaaa"]);

@@ -65,3 +65,4 @@ T-049 | 3 | T-040 | L | content,buzzerquiz | Grow the Buzzer Quiz bank from 20 t
 T-041 | 3 | T-040 | M | full-stack,buzzerquiz | Buzzer Quiz v2 power cards: 3 per player per game, one per question (Freeze, Double, 50/50, Steal, Shield); balance after the base game is proven fun | done 2026-11-01
 T-050 | 3 | - | S | full-stack | Drop the always-empty names field from WithIdentity/WithMultiplayerIdentity and every game's state (ftw, cocounsel, nighthighway, buzzerquiz, wordscramble: newGame + normalize), checking the rules still accept old states | done 2026-11-03
 T-mke2 | 2 | - | L | buzzerquiz | Buzzer Quiz: more questions, and never the same question twice in a room session (across rematches) | done 2026-11-16
+T-qr8x | 2 | - | S | devops | todo.test.ts migrate tests time out on Windows (5-6 s against the 5 s default), so check.mjs fails on main | done 2026-11-16
