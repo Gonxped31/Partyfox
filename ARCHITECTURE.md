@@ -1,6 +1,6 @@
 # Architecture
 
-Next.js app (App Router) on Firebase Realtime Database with invisible Anonymous Auth. Players' clients talk to the database directly, guarded by `database.rules.json`. The server code is the owner's `/admin` dashboard (`app/api/admin/*` route handlers using `firebase-admin`, which bypasses the rules, behind a password cookie), the daily puzzles' routes, and a daily room cleanup (`app/api/cron/cleanup-rooms`, run by Vercel Cron from `vercel.json`, behind `CRON_SECRET`).
+Next.js app (App Router) on Firebase Realtime Database with invisible Anonymous Auth. Players' clients talk to the database directly, guarded by `database.rules.json`. The server code is the owner's `/admin` dashboard (`app/api/admin/*` route handlers using `firebase-admin`, which bypasses the rules, behind a password cookie), the daily puzzles' routes, and a daily room cleanup (`app/api/cron/cleanup-rooms`, run by a Vercel Schedule from `vercel.json`, behind `CRON_SECRET`).
 
 ## Games
 

@@ -8,10 +8,13 @@ import { checkPassword } from "@/lib/admin/session";
 export const maxDuration = 60;
 
 /**
- * The daily room cleanup (`cleanupRooms`), called by Vercel Cron (`vercel.json`).
- * Vercel sends `Authorization: Bearer $CRON_SECRET`; the route refuses anything
- * else, and everything while `CRON_SECRET` is unset. Set it on Production only:
- * Preview deployments share the production database.
+ * The daily room cleanup (`cleanupRooms`), called by the `cleanup-rooms` Vercel
+ * Schedule (`vercel.json`; a path target with `requestMethod: "GET"`, since
+ * schedules POST by default). Vercel sends `Authorization: Bearer $CRON_SECRET`;
+ * the route refuses anything else, and everything while `CRON_SECRET` is unset.
+ * Set it on Production only: Preview deployments share the production database
+ * (their schedules also start inactive). A run may be delivered twice; a second
+ * one finds nothing left to delete.
  */
 export async function GET() {
   const auth = (await headers()).get("authorization") ?? "";

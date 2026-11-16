@@ -274,15 +274,16 @@ Rooms are removed in two steps:
    Anyone who opens the old link gets a new, empty room. Closed rooms can be selected
    and deleted together too ("Delete N rooms").
 
-**Daily cleanup.** Once a day (09:00 UTC, `vercel.json`), Vercel Cron calls
-`/api/cron/cleanup-rooms`, which deletes rooms idle for 30 days (no game played; a room
-never played counts from its creation) and rooms closed for 7 days, the same way as
-above, summary included, up to 300 a day, oldest first. It needs one more variable, for
-**Production only**:
+**Daily cleanup.** Once a day (around 09:00 UTC), the `cleanup-rooms` Vercel Schedule
+(`vercel.json`) calls `/api/cron/cleanup-rooms`, which deletes rooms idle for 30 days
+(no game played; a room never played counts from its creation) and rooms closed for 7
+days, the same way as above, summary included, up to 300 a day, oldest first. The
+project's **Schedules** page in Vercel shows each run, and **Run Schedule** runs it now.
+It needs one more variable, for **Production only**:
 
-- `CRON_SECRET`: a long random string. Vercel sends it with each cron call, and the
-  route refuses any call without it, and every call while it's unset. Previews share
-  the production database, so never set it there.
+- `CRON_SECRET`: a long random string. Vercel sends it with each scheduled call, and
+  the route refuses any call without it, and every call while it's unset. Previews
+  share the production database, so never set it there.
 
 **Clear all stats** (at the bottom of `/admin`, asks for the admin password again)
 starts every number from zero. It records the time in `analytics/statsSince`, from which

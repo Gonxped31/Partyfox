@@ -42,7 +42,7 @@ export interface CleanupResult {
 }
 
 /**
- * The daily room cleanup (T-024; Vercel Cron calls app/api/cron/cleanup-rooms).
+ * The daily room cleanup (T-024; a Vercel Schedule calls app/api/cron/cleanup-rooms).
  * Rooms are never deleted otherwise, and "Your rooms" only hides them. Each
  * room due is closed (which also takes a public room out of the matchmaking
  * queue), then deleted the way /admin deletes one (`deleteRooms`): its summary
