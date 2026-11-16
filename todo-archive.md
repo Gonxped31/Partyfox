@@ -69,3 +69,4 @@ T-qr8x | 2 | - | S | devops | todo.test.ts migrate tests time out on Windows (5-
 T-qkje | 2 | - | S | cocounsel | Co-Counsel: How to play says the case ends after the 3rd miss, the code ends it ON the 3rd: make the rule and the text agree | done 2026-11-16
 T-sje7 | 2 | - | S | ftw,admin | Same Page: decide what counts as one finished game (today every revealed round counts, inflating its share of games finished per week) | done 2026-11-16
 T-3xy9 | 2 | - | M | buzzerquiz,frontend | Buzzer Quiz: on short phones the buzzer sits under the question and choices, partly below the fold once a question runs to 3-4 lines | done 2026-11-16
+T-024 | 2 | - | M | backend,infra | Room cleanup function (when Firebase moves to Blaze or storage nears the free tier): scheduled Cloud Function deleting rooms idle 30+ days (lastActive, else meta.createdAt) with their roomsByName entry. New functions/ package, firebase.json | done 2026-11-16
