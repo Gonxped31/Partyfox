@@ -26,7 +26,7 @@ Co-Authored-By: <the trailer the session gives>
 | :--- | :--- |
 | `references/` | The user edits it concurrently. Commit only what you changed. |
 | `AGENTS.md` Next.js block | `next dev` re-adds it; commit it with your work (see the file). |
-| `package-lock.json` | Windows npm drops Linux optional entries (T-054). Commit it only when the task changed dependencies, and say so. |
+| `package-lock.json` | Windows npm drops entries only Linux needs, and the `lockfile` check then fails: repair it with `node scripts/fix-lock.mjs` (needs Docker). Commit it only when the task changed dependencies, and say so. |
 | `todos/`, `todo-archive.md` | Changed only by the todo script; commit them with the work they track. One file per todo, so parallel branches merge cleanly (`todo` skill, section 4). |
 | Night Highway's generated engine | Kept in git; commit regenerated output with the change that caused it. |
 | `*-debug.log`, `.next/`, screenshots | Ignored or scratch; never commit them. |

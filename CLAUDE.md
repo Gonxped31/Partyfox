@@ -82,7 +82,7 @@ rules from nested `CLAUDE.md` files, the rest from:
 
 | Command | What it does |
 | :--- | :--- |
-| `node scripts/check.mjs` (`./scripts/check`) | Doctor, `tsc`, lint, `npm test` (`scripts/check.json`), one line per failure; `--fast` skips tests, `--rules` adds rules tests, `--verbose`. Use it, not raw test or lint output |
+| `node scripts/check.mjs` (`./scripts/check`) | Doctor, lockfile, `tsc`, lint, `npm test` (`scripts/check.json`), one line per failure; `--fast` skips tests, `--rules` adds rules tests, `--verbose`. Use it, not raw test or lint output |
 | `node scripts/doctor.mjs` | Agent setup: size limits, dead paths, hooks |
 | `npm run dev` | Dev server at localhost:3000 (one per project) |
 | `./scripts/build`, `./scripts/test-rules` | `npm run build` (also type-checks) and `npm run test:rules` (`tests/rules/` on the emulator, needs Java), one line unless they fail |

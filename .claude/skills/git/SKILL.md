@@ -31,7 +31,7 @@ that discard work.
 0. `git branch --show-current` must print your branch. If it doesn't, someone
    switched the checkout: stop, don't commit, and tell the user.
 1. Run the checks CLAUDE.md requires for the change (`node scripts/check.mjs` at
-   least). While CI only runs on manual dispatch (T-054), these are the only gate.
+   least).
 2. `git status --short`. Stage the paths you changed **by name**; never
    `git add -A` or `git add .`. The user edits `references/` at the same time:
    leave out files you didn't touch and mention them instead.

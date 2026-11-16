@@ -5,6 +5,10 @@
       "run": "node scripts/doctor.mjs"
     },
     {
+      "name": "lockfile",
+      "run": "node scripts/check-lock.mjs"
+    },
+    {
       "name": "types",
       "run": "npx tsc --noEmit",
       "format": "tsc"
