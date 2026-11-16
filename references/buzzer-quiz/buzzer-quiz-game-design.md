@@ -138,12 +138,17 @@ restores them.
 - `lib/games/buzzerquiz/questions.json` (or one file per language), validated by a test.
 - Each question: `{ id, lang, topic, question, choices: [4 strings], answer: 0-3 }`,
   with the right answer listed first in the file and shuffled at play time.
-- Target: about 40 questions per topic per language (about 480 in all), so a 20-question
-  game on a single topic doesn't repeat within a few games.
+- 120 questions per topic per language (1,440 in all), so with the room's seen list
+  (`usedQuestionIds`) a single-topic room plays 6 full 20-question games before any
+  question comes back.
 - Rules for writing questions: one clearly right answer, three plausible wrong ones,
   nothing that goes out of date quickly ("current president of…"), choices short enough
   for a 390 px wide tile (about 30 characters), question about 120 characters at most.
-- French questions are written in French, not translated word for word.
+- No question may give away another's answer in the same topic and language: "Who
+  directed *Parasite*?" next to "Which film won Best Picture in 2020?" does. Name the
+  film, person or place only where no other question has it as its answer.
+- French questions are written for francophones (France, Belgium, Switzerland, Québec,
+  francophone Africa), not translated from the English ones.
 - Every question gets fact-checked before shipping.
 
 ## Edge cases

@@ -1,0 +1,4 @@
+T-3xy9 | 2 | - | M | buzzerquiz,frontend | Buzzer Quiz: on short phones the buzzer sits under the question and choices, partly below the fold once a question runs to 3-4 lines
+created: 2026-11-16T06:32:08.196Z
+
+Trigger: now (measured 2026-11-16 while growing the bank, T-mke2). What: on the iphone-se profile (375x667), a 4-line question (90 characters, the bank's longest) puts the BUZZ label at the bottom edge of the screen and leaves ~100 px of the button visible; a 3-line one clips the button's bottom. Real Safari on an SE shows less than 667 px, so it is worse on the device. 6% of questions now run over 80 characters (57 of 1,440) and 13% over 70. Do: decide with the user - e.g. keep the buzzer docked at the bottom on phones (sticky, with the choices scrolling above), or shrink the question type on small heights; then check on iphone-se and a real iPhone (T-017). Why: the buzzer is the game; a player who has to scroll to reach it loses the race.

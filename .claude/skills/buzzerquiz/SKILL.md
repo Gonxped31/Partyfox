@@ -23,7 +23,7 @@ out for everyone and its player is locked out of that question. A right pick sco
 | `lib/games/buzzerquiz/game.ts` | The pure state machine (`QuizState`), `advance`, `pickQuestions` (only questions not in the room's `usedQuestionIds`, until the chosen pool runs out), `choiceOrder`, `ranking` |
 | `lib/games/buzzerquiz/constants.ts` | Timings, topics, lengths, players |
 | `lib/games/buzzerquiz/questions.json` | The bank, one question per line; `choices[0]` is always right |
-| `lib/games/buzzerquiz/questions.test.ts` | Validates the bank (lengths, 20 per topic per language, French spacing) |
+| `lib/games/buzzerquiz/questions.test.ts` | Validates the bank (lengths, ids, no repeated text, 120 per topic per language, French spacing) |
 | `app/buzzerquiz/page.tsx` | Session (`useSession`, 4 seats, min 2), timers, buzz and pick |
 | `components/buzzerquiz/` | `ui.tsx` (tokens, buzzer, tiles, scores), `Screens.tsx`, `QuestionScreen.tsx`, `Rules.tsx` (How to play: the ? in every screen's title row, a link in the lobby; `docs/how-to-play.md`, so a rules change updates it too) |
 | `database.rules.json` → `buzzerquiz` | Validates the whole state; `maxPlayers` must be 4 |
@@ -89,8 +89,10 @@ links back to `/`.
 - Two languages: the interface follows each viewer's page language
   (`components/buzzerquiz/text.ts`), the questions the room's `settings.lang`. A new
   room's questions start in the creator's interface language; the host can switch.
-- The bank must keep ≥ 20 questions per topic per language, or a 20-question
-  single-topic game can't start (the test enforces it). It has 40 per topic per
-  language (2026-11-01).
+- The bank has 120 questions per topic per language (1,440 in all, 2026-11-16),
+  and the test keeps it there: with `usedQuestionIds`, a single-topic room gets 6
+  full games before anything repeats. New questions continue each group's
+  numbering (`geo-fr-121`), and none may name another question's answer in the
+  same topic and language (`buzzer-quiz-game-design.md`, Content).
 - Playwright: a `click()` on the buzzer waits while it's disabled. To race two
   players, dispatch `pointerdown` on both at once (see the live test).

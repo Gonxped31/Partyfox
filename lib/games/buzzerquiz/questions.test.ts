@@ -7,6 +7,8 @@ import { QUESTIONS } from "./questions";
 const MAX_CHOICE = 30;
 const MAX_QUESTION = 120;
 const LONGEST_GAME = Math.max(...LENGTHS);
+/** Per topic and language: a room playing one topic gets 6 full-length games before any question repeats. */
+const POOL = 120;
 
 describe("questions.json", () => {
   it("has unique ids that fit the rules (1-40 characters)", () => {
@@ -33,10 +35,10 @@ describe("questions.json", () => {
     expect(new Set(q.choices.map((c) => c.toLowerCase())).size).toBe(CHOICES);
   });
 
-  it("has enough questions for the longest single-topic game in every language", () => {
+  it("has enough questions per topic in every language for several games without a repeat", () => {
     for (const lang of ["en", "fr"] as const) {
       for (const topic of TOPICS) {
-        expect(QUESTIONS.filter((q) => q.lang === lang && q.topic === topic).length, `${lang} ${topic}`).toBeGreaterThanOrEqual(LONGEST_GAME);
+        expect(QUESTIONS.filter((q) => q.lang === lang && q.topic === topic).length, `${lang} ${topic}`).toBeGreaterThanOrEqual(POOL);
         expect(() => pickQuestions(QUESTIONS, { settings: { lang, topics: [topic], length: LONGEST_GAME } }, Math.random)).not.toThrow();
       }
     }

@@ -3,7 +3,8 @@
 // iPhone and an Android player join, and the three play it through - a buzz
 // race decided by reaction time, a wrong answer struck out for everyone and
 // its player locked out, a right answer scored 2 - then the final ranking and
-// a rematch, and How to play opened from the title row and the lobby. Power
+// a rematch with none of the first game's questions, and How to play opened
+// from the title row and the lobby. Power
 // cards are on: everyone is dealt 3, and a card played shows on every screen.
 // About a minute.
 //
@@ -152,11 +153,15 @@ try {
   await shot(B, "final-iphone");
   log("final ranking:", JSON.stringify((await state()).scores));
 
-  // Rematch from a player's device: same settings, scores back to 0.
+  // Rematch from a player's device: same settings, scores back to 0, and none of the first game's questions.
   await B.getByRole("button", { name: "Rematch" }).click();
-  await until(async () => { const s = await state(); return s?.phase === "countdown" && s.index === 0 && s.scores.p1 === 0; }, "the rematch");
+  const s2 = await until(async () => { const s = await state(); return s?.phase === "countdown" && s.index === 0 && s.scores.p1 === 0 ? s : null; }, "the rematch");
   await A.getByText("Thumb on the buzzer…").waitFor();
-  log("rematch started");
+  const repeated = s2.questionIds.filter((id) => s1.questionIds.includes(id));
+  if (repeated.length) throw new Error(`the rematch repeats ${repeated.join(", ")}`);
+  const seen = new Set(Object.values(s2.usedQuestionIds ?? {}));
+  if (![...s1.questionIds, ...s2.questionIds].every((id) => seen.has(id))) throw new Error(`usedQuestionIds misses a question played: ${JSON.stringify(s2.usedQuestionIds)}`);
+  log("rematch started, with new questions");
 
   if (errors.length) throw new Error(`console errors:\n${errors.join("\n")}`);
   console.log("\nPASS - no console errors");

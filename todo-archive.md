@@ -64,3 +64,4 @@ T-8ndb | 3 | - | M | full-stack,regions | Daily routes: Firebase App Check (reCA
 T-049 | 3 | T-040 | L | content,buzzerquiz | Grow the Buzzer Quiz bank from 20 toward ~40 questions per topic per language (~480), fact-checked | done 2026-11-01
 T-041 | 3 | T-040 | M | full-stack,buzzerquiz | Buzzer Quiz v2 power cards: 3 per player per game, one per question (Freeze, Double, 50/50, Steal, Shield); balance after the base game is proven fun | done 2026-11-01
 T-050 | 3 | - | S | full-stack | Drop the always-empty names field from WithIdentity/WithMultiplayerIdentity and every game's state (ftw, cocounsel, nighthighway, buzzerquiz, wordscramble: newGame + normalize), checking the rules still accept old states | done 2026-11-03
+T-mke2 | 2 | - | L | buzzerquiz | Buzzer Quiz: more questions, and never the same question twice in a room session (across rematches) | done 2026-11-16
