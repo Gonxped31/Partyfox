@@ -49,6 +49,16 @@ function otherRoleOf(role: Role): Role {
   return role === INVESTIGATOR ? DEFENDANT : INVESTIGATOR;
 }
 
+/**
+ * The role a player takes in "Rematch with swapped roles": the other one. Roles
+ * are seats, kept at the room level, not in the game state, so the rematch's
+ * game state is just `newGame(caseId)` and the swap is the seat trade the page
+ * makes with this role (the same trade as "Switch role instead").
+ */
+export function rematchRole(role: Role): Role {
+  return otherRoleOf(role);
+}
+
 // Realtime Database drops empty arrays AND empty objects entirely on write
 // (confirmed while building E-Card - see CLAUDE.md's Conventions, 'Realtime Database data shapes'), so
 // `locks`/`log` can round-trip as undefined once the room has gone through a

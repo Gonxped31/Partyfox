@@ -9,7 +9,7 @@ import LocalLink from "@/components/LocalLink";
 import InAppBrowserBanner from "@/components/InAppBrowserBanner";
 import { caseForState, DEFAULT_CASE_ID } from "@/lib/games/cocounsel/cases";
 import { DEFENDANT, GAME_TITLE, INVESTIGATOR, MAX_CASE_ATTEMPTS } from "@/lib/games/cocounsel/constants";
-import { classifyDuo, continueAfterReveal, finishedGameId, focusPercent, type GameState, lockIn, newGame, screenOfRole, totalAttempts, trustPercent } from "@/lib/games/cocounsel/game";
+import { classifyDuo, continueAfterReveal, finishedGameId, focusPercent, type GameState, lockIn, newGame, rematchRole, screenOfRole, totalAttempts, trustPercent } from "@/lib/games/cocounsel/game";
 import { COLOR, CONTAINER_MAX_WIDTH_CLASS } from "@/lib/games/cocounsel/theme";
 import { useTheme } from "@/lib/games/cocounsel/useTheme";
 import InviteLinkBanner from "@/components/InviteLinkBanner";
@@ -201,14 +201,17 @@ export default function CoCounselPage() {
   // Restarting a case resets only the game: seats live at the room level,
   // so both players keep their roles and go straight into Part 1 (they can
   // still trade roles from ConfirmRoleScreen next time they open the room).
-  // "Rematch" and the footer's reset replay the SAME case; picking a
-  // different one goes through CasePicker (handleChooseCase).
+  // The footer's reset and "Rematch" replay the SAME case (Rematch also trades
+  // the roles); picking a different one goes through CasePicker (handleChooseCase).
   const handleResetCase = () => {
     setGame(newGame(caseDef.id));
     setForceCasePicker(false);
   };
+  // "Rematch with swapped roles": the same case, fresh, with the two players
+  // trading roles (see tradeRoles below).
   const handleRematch = () => {
     setGame(newGame(caseDef.id));
+    tradeRoles();
     setForceCasePicker(false);
     setShowRecap(false);
   };
@@ -235,14 +238,18 @@ export default function CoCounselPage() {
   // link) - reset the flag so the fresh room's case-picker shows correctly.
   // "Switch role instead": with the other player seated, trade seats with
   // them in one update; with their seat still empty, just move into it.
-  const handleSwitchRole = () => {
-    setRoleConfirmedThisVisit(true);
+  const tradeRoles = () => {
     if (bothJoined) {
       releaseAllIdentities();
       return;
     }
-    const otherSeat = me === INVESTIGATOR ? DEFENDANT : INVESTIGATOR;
+    if (!me) return;
+    const otherSeat = rematchRole(me);
     void pickIdentity(otherSeat, caseDef.characters[screenOfRole(otherSeat)]);
+  };
+  const handleSwitchRole = () => {
+    setRoleConfirmedThisVisit(true);
+    tradeRoles();
   };
   // Asks first once both are playing: leaving ends the case for the partner.
   const [askingLeave, setAskingLeave] = useState(false);

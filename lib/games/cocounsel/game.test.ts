@@ -10,6 +10,7 @@ import {
   type GameState,
   lockIn,
   newGame,
+  rematchRole,
   screenOfRole,
   totalAttempts,
   trustPercent,
@@ -25,6 +26,14 @@ describe("screenOfRole", () => {
   it("maps the investigator seat to the investigator screen and the defendant seat to the defendant screen", () => {
     expect(screenOfRole(INVESTIGATOR)).toBe("investigator");
     expect(screenOfRole(DEFENDANT)).toBe("defendant");
+  });
+});
+
+describe("rematchRole", () => {
+  it("gives each player the other role, and swapping twice is back where they started", () => {
+    expect(rematchRole(INVESTIGATOR)).toBe(DEFENDANT);
+    expect(rematchRole(DEFENDANT)).toBe(INVESTIGATOR);
+    expect(rematchRole(rematchRole(INVESTIGATOR))).toBe(INVESTIGATOR);
   });
 });
 

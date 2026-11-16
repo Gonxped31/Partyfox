@@ -86,6 +86,16 @@ describe("a 1v1 room's lifecycle, with the app's own updates", () => {
     expect(seats).toEqual({ p1: "alice", p2: "bob" });
   });
 
+  it("Co-Counsel's rematch: a restarted case, then the seats traded, each written by a seated player", async () => {
+    await createAndSeat("cocounsel", ["alice", "bob"]);
+    const game = `games/${ROOM}/cocounsel`;
+    await assertSucceeds(dbAs(env, "alice").ref(game).set(plain({ ...newCcGame("ruined-birthday"), phase: "CASE_DONE" })));
+    await assertSucceeds(dbAs(env, "alice").ref(game).set(plain(newCcGame("ruined-birthday"))));
+    await assertSucceeds(send("alice", swapSeatsUpdate({ code: ROOM, a: { uid: "alice", seat: "p1" }, b: { uid: "bob", seat: "p2" } })));
+    expect((await dbAs(env, "bob").ref(`games/${ROOM}/seats`).get()).val()).toEqual({ p1: "bob", p2: "alice" });
+    expect((await dbAs(env, "bob").ref(`${game}/phase`).get()).val()).toBe("SELECTING");
+  });
+
   it("takes over an offline seat after 2 minutes", async () => {
     const meta = await createAndSeat("ftw", ["alice", "bob"]);
     await seed(env, { [`games/${ROOM}/presence/alice`]: { online: false, lastSeen: Date.now() - 3 * 60_000 } });
