@@ -135,8 +135,8 @@ const RULES = texts<RulesText>({
         through and pick again.
       </>,
       <>
-        You have <b>{MAX_CASE_ATTEMPTS} misses for the whole case</b>, not per Part. The one after that ends it: the case is adjourned. If that happens on the last Part, the
-        judge shows you the right pair first.
+        Misses count for the whole case, not per Part: <b>{MAX_CASE_ATTEMPTS} misses</b> and the case is adjourned. If that happens on the last Part, the judge shows you
+        the right pair first.
       </>,
     ],
     winTitle: "Winning: Trust and Focus",
