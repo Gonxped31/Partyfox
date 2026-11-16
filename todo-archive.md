@@ -72,3 +72,4 @@ T-3xy9 | 2 | - | M | buzzerquiz,frontend | Buzzer Quiz: on short phones the buzz
 T-024 | 2 | - | M | backend,infra | Room cleanup function (when Firebase moves to Blaze or storage nears the free tier): scheduled Cloud Function deleting rooms idle 30+ days (lastActive, else meta.createdAt) with their roomsByName entry. New functions/ package, firebase.json | done 2026-11-16
 T-054 | 1 | - | S | devops | CI npm ci fails: package-lock.json is missing optional @emnapi entries (Windows npm drops them). Fix the lockfile so npm ci passes on Linux, then restore CI | done 2026-11-16
 T-gcp4 | 3 | - | S | cocounsel | Co-Counsel: "Rematch with swapped roles" keeps the same roles: swap them, or rename the button | done 2026-11-16
+T-x24j | 3 | - | M | ftw | Same Page: review the US-only items in the French prompt bank (prompts.fr.json) and swap where a francophone equivalent reads better | done 2026-11-16

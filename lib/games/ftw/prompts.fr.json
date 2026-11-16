@@ -627,8 +627,8 @@
       "items": [
         "William Shakespeare",
         "Emily Dickinson",
-        "Robert Frost",
-        "Maya Angelou",
+        "Victor Hugo",
+        "Charles Baudelaire",
         "Walt Whitman"
       ]
     },
@@ -788,7 +788,7 @@
         "La Petite Fille au ballon",
         "Fresques du mur de Berlin",
         "Mur de Lennon",
-        "Watts Towers",
+        "Mosaïques d'Invader",
         "Passages piétons arc-en-ciel"
       ]
     },
@@ -1977,7 +1977,7 @@
         "Conseil des élèves",
         "Club de robotique",
         "Troupe de théâtre",
-        "Comité de l'album de fin d'année"
+        "Journal de l'école"
       ]
     },
     {
@@ -2097,7 +2097,7 @@
       "items": [
         "Oscars",
         "Grammy Awards",
-        "Emmy Awards",
+        "Césars",
         "Golden Globes",
         "MTV Awards"
       ]
@@ -2147,7 +2147,7 @@
       "items": [
         "Au cinéma",
         "Dans son salon",
-        "Au drive-in",
+        "En salle d'art et d'essai",
         "Projection en plein air",
         "Sur son téléphone"
       ]
@@ -2670,8 +2670,8 @@
       "prompt": "Chaînes de restauration rapide",
       "items": [
         "McDonald's",
-        "Wendy's",
-        "Taco Bell",
+        "Subway",
+        "Domino's Pizza",
         "KFC",
         "Burger King"
       ]
@@ -2710,10 +2710,10 @@
       "prompt": "Marques de céréales",
       "items": [
         "Cheerios",
-        "Froot Loops",
+        "Chocapic",
         "Frosted Flakes",
-        "Raisin Bran",
-        "Cinnamon Toast Crunch"
+        "Special K",
+        "Nesquik"
       ]
     },
     {
@@ -2781,7 +2781,7 @@
       "items": [
         "Cola",
         "Citron-lime",
-        "Root beer",
+        "Pamplemousse",
         "Orange",
         "Ginger ale"
       ]
@@ -2797,13 +2797,13 @@
       ]
     },
     {
-      "prompt": "Plats de Thanksgiving",
+      "prompt": "Plats du repas de Noël",
       "items": [
-        "Dinde",
-        "Purée de pommes de terre",
-        "Farce",
-        "Sauce aux canneberges",
-        "Tarte à la citrouille"
+        "Dinde aux marrons",
+        "Foie gras",
+        "Saumon fumé",
+        "Huîtres",
+        "Bûche de Noël"
       ]
     },
     {
@@ -2829,7 +2829,7 @@
     {
       "prompt": "Sauces pour salade",
       "items": [
-        "Ranch",
+        "Sauce au yaourt",
         "César",
         "Italienne",
         "Vinaigrette",
@@ -2882,7 +2882,7 @@
         "Chocolat",
         "Vanille",
         "Red velvet",
-        "Confettis",
+        "Fraise",
         "Carottes"
       ]
     },
@@ -2912,7 +2912,7 @@
         "Soupe à la tomate",
         "Soupe poulet et nouilles",
         "Minestrone",
-        "Chaudrée de palourdes",
+        "Soupe à l'oignon",
         "Soupe miso"
       ]
     },
@@ -3693,13 +3693,13 @@
       ]
     },
     {
-      "prompt": "Quel État américain a la plus grande superficie ?",
+      "prompt": "Quelle province canadienne a la plus grande superficie ?",
       "items": [
-        "Alaska",
-        "Texas",
-        "Californie",
-        "Montana",
-        "Nouveau-Mexique"
+        "Québec",
+        "Ontario",
+        "Colombie-Britannique",
+        "Alberta",
+        "Saskatchewan"
       ]
     },
     {
@@ -4035,13 +4035,13 @@
       ]
     },
     {
-      "prompt": "Quel est le plus grand État des États-Unis ?",
+      "prompt": "Quel est le plus grand pays de l'Union européenne ?",
       "items": [
-        "Alaska",
-        "Texas",
-        "Californie",
-        "Montana",
-        "Arizona"
+        "France",
+        "Espagne",
+        "Suède",
+        "Allemagne",
+        "Finlande"
       ]
     },
     {
@@ -4823,8 +4823,8 @@
     {
       "prompt": "Jeux de jardin",
       "items": [
-        "Cornhole",
-        "Lancer de fers à cheval",
+        "Pétanque",
+        "Mölkky",
         "Badminton",
         "Frisbee",
         "Croquet"
@@ -4846,7 +4846,7 @@
         "Gin-rami",
         "Bataille",
         "Crapette",
-        "Cribbage",
+        "Mille Bornes",
         "Va à la pêche"
       ]
     },
@@ -6999,7 +6999,7 @@
       "items": [
         "Épargner",
         "Rembourser ses dettes",
-        "Se bâtir un dossier de crédit",
+        "Commencer à investir",
         "Évolution de carrière",
         "Fonds d'urgence"
       ]
@@ -7068,20 +7068,20 @@
       "prompt": "Priorités avant d'acheter une maison",
       "items": [
         "Épargne",
-        "Cote de crédit",
+        "Capacité d'emprunt",
         "Revenu stable",
         "Emplacement",
         "Apport initial"
       ]
     },
     {
-      "prompt": "Meilleures façons de bâtir son crédit",
+      "prompt": "Meilleures façons de garder ses finances saines",
       "items": [
         "Payer à temps",
-        "Soldes bas",
-        "Historique de crédit",
-        "Types de crédit variés",
-        "Surveiller son dossier"
+        "Éviter le découvert",
+        "Limiter les achats à crédit",
+        "Garder un matelas de sécurité",
+        "Surveiller ses comptes"
       ]
     },
     {
@@ -7095,7 +7095,7 @@
       ]
     },
     {
-      "prompt": "Meilleures façons d'utiliser un remboursement d'impôt",
+      "prompt": "Meilleures façons d'utiliser une rentrée d'argent inattendue",
       "items": [
         "Épargne",
         "Rembourser ses dettes",
@@ -7793,8 +7793,8 @@
       "items": [
         "Poudlard",
         "L'Institut Xavier pour jeunes surdoués",
-        "Degrassi",
-        "Sweet Valley High",
+        "Fond de l'Étang (Les Choristes)",
+        "Welton Academy",
         "Monstres Academy"
       ]
     },
@@ -8064,9 +8064,9 @@
       "prompt": "Prix de musique célèbres",
       "items": [
         "Grammy",
-        "Billboard Music Award",
+        "Félix (Québec)",
         "MTV Video Music Award",
-        "American Music Award",
+        "Victoires de la musique",
         "BRIT Award"
       ]
     },
@@ -8413,9 +8413,9 @@
       ]
     },
     {
-      "prompt": "Quelle merveille naturelle se trouve en Arizona ?",
+      "prompt": "Quelle merveille naturelle se trouve en France ?",
       "items": [
-        "Grand Canyon",
+        "Gorges du Verdon",
         "Chutes du Niagara",
         "Yellowstone",
         "Mont Rushmore",
@@ -13037,7 +13037,7 @@
       "items": [
         "Quinceañera",
         "Bar-mitsva",
-        "Sweet sixteen",
+        "Communion solennelle",
         "Debut (Philippines)",
         "Cérémonie du lever du soleil"
       ]
@@ -13046,7 +13046,7 @@
       "prompt": "Défilés célèbres dans le monde",
       "items": [
         "Carnaval de Rio",
-        "Parade de Thanksgiving de Macy's",
+        "Défilé du 14 Juillet",
         "Parade des roses de Pasadena",
         "Mardi gras",
         "Défilé du Nouvel An chinois"
