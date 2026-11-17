@@ -1,6 +1,6 @@
 {
   "about": "Written by agk setup and agk update: the kit's files as it wrote them, so agk update can tell the ones you changed.",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "stack": "node",
   "files": {
     ".claude/settings.json": "07785c08a6d8240767aca6968c6991a8e34de5f5e75de1a1c73695868c7c81b3",
@@ -16,7 +16,7 @@
     "scripts/check.mjs": "79c046e8305a60149ffda294b8dbaa077cf980ea7d449ab89eac657b22850f5c",
     "scripts/doctor.mjs": "7e2bef65362ab9c2f0b7e25702e21ad78c58b03867bfbc8f6c62e3ee0775fd30",
     "scripts/hooks/block-big-read.mjs": "463be960d034f8cf8bcc40104fb2d6b169a2cee1a19998c624d72e1d747c5090",
-    "scripts/hooks/guard-commands.mjs": "bae6639f327c1e90e4fc16e7cf46d16e57d222078f669483112e7cac4956e50e",
+    "scripts/hooks/guard-commands.mjs": "9eb33e316a8a6f23b5c31c057a20a7094ef2d049e0a77d4a066f169c9aaa6d99",
     "scripts/merge.mjs": "47c542e77738c65c42a47e7fc057c027447f410444f23de2fbcc0e411d1d6555"
   }
 }

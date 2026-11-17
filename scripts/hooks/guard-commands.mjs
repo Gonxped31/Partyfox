@@ -6,7 +6,12 @@
 // Long options count in any abbreviation git accepts (--no-veri, --al).
 // Asks the user first: merging into main, pushing, and commands that discard work or move
 // branches by hand.
-// Quoted text, heredocs and here-strings are ignored, so a commit message can mention any of this.
+// Messages are ignored (quoted text of several words, the value of -m or -F, heredocs and
+// here-strings), so a commit message can mention any of this. A quoted flag or path still counts
+// (git add ".", git commit "--no-verify"), and so does a command handed to another shell
+// (bash -c "...", pwsh -Command "...", cmd /c "...", eval "...") or run in ( ) or { }.
+// It stops reflexes, not intent: a command can always be spelled so that no pattern sees it. The
+// git hooks are the gate.
 // Fails open: unreadable input lets the command through.
 import { readFileSync } from "node:fs";
 
@@ -17,10 +22,33 @@ try {
   process.exit(0);
 }
 
-const code = command
-  .replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n\s*\2\s*(?=\n|$)/g, " ") // heredoc bodies
-  .replace(/@(['"])\r?\n[\s\S]*?\r?\n\1@/g, '""') // PowerShell here-strings
-  .replace(/"(?:[^"\\`]|[\\`].)*"|'[^']*'/g, '""'); // quoted strings
+const QUOTED = /"(?:[^"\\`]|[\\`].)*"|'[^']*'/g;
+const STRING = `("(?:[^"\\\\\`]|[\\\\\`].)*"|'[^']*')`;
+// A command handed to another shell: its string is code, not a message.
+const INNER = new RegExp(
+  `\\b(?:(?:ba|z|da)?sh|pwsh|powershell)(?:\\.exe)?\\b[^\\n;|&]*?\\s-(?:l?c|[Cc]ommand)\\s+${STRING}|\\bcmd(?:\\.exe)?\\s+/[cC]\\s+${STRING}|\\beval\\s+${STRING}`,
+  "g",
+);
+// A quoted word that is a flag or one of the bulk paths: git reads it as if it weren't quoted.
+const FLAG_OR_PATH = /^(?:--?[A-Za-z][\w-]*(?:=\S*)?|\.[\\/]?|\*|:\/\.?)$/;
+// What comes just before the value of -m, -F, --message or --file: that value is never a flag.
+const BEFORE_VALUE = /(?:^|\s)(?:-[a-zA-Z]*[mF]|--message|--file)[=\s]*$/;
+
+/** The command without its messages, with the commands it hands to other shells added as lines. */
+function codeOf(text, depth = 0) {
+  const inner = depth < 3 ? [...text.matchAll(INNER)].map((m) => codeOf((m[1] ?? m[2] ?? m[3]).slice(1, -1), depth + 1)) : [];
+  const outer = text.replace(QUOTED, (quoted, offset, whole) => {
+    const word = quoted.slice(1, -1);
+    return FLAG_OR_PATH.test(word) && !BEFORE_VALUE.test(whole.slice(0, offset)) ? word : '""';
+  });
+  return [outer, ...inner].join("\n");
+}
+
+const code = codeOf(
+  command
+    .replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n\s*\2\s*(?=\n|$)/g, " ") // heredoc bodies
+    .replace(/@(['"])\r?\n[\s\S]*?\r?\n\1@/g, '""'), // PowerShell here-strings
+);
 
 function refuse(reason) {
   console.error(reason);
@@ -35,7 +63,8 @@ function parseGit(segment) {
   for (i++; i < words.length && words[i].startsWith("-"); i++) if (words[i] === "-C" || words[i] === "-c") i++;
   return { sub: words[i], args: words.slice(i + 1) };
 }
-const gits = code.split(/&&|\|\||[;|\n]/).map(parseGit).filter(Boolean);
+// ( ), $( ) and { } group commands, so they separate them too; a ref like stash@{0} is one word.
+const gits = code.replace(/@\{[^}\n]*\}/g, "@").split(/&&|\|\||[;|\n(){}]/).map(parseGit).filter(Boolean);
 const has = (args, ...flags) => args.some((a) => flags.includes(a));
 
 /** The letters of a short-option group like -qnm, up to one that takes a value (m: -mfoo is a message). */
