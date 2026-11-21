@@ -117,7 +117,7 @@ const RULES = texts<{
         <b>Language:</b> English or French questions.
       </>,
       <>
-        <b>Topics:</b> any of the {TOPICS.length} (geography, cinema &amp; TV, science, sport, music, history).
+        <b>Topics:</b> any of the {TOPICS.length} (geography, cinema &amp; TV, science, sport, music, history, anime &amp; manga).
       </>,
       <>
         <b>Length:</b> {LENGTHS.join(", ")} questions ({SHORTEST} is a quick round, {LONGEST} a long game).
@@ -206,7 +206,7 @@ const RULES = texts<{
         <b>Langue&nbsp;:</b> questions en anglais ou en français.
       </>,
       <>
-        <b>Thèmes&nbsp;:</b> au choix parmi les {TOPICS.length} (géographie, cinéma et télé, sciences, sport, musique, histoire).
+        <b>Thèmes&nbsp;:</b> au choix parmi les {TOPICS.length} (géographie, cinéma et télé, sciences, sport, musique, histoire, mangas et animés).
       </>,
       <>
         <b>Durée&nbsp;:</b> {LENGTHS.join(", ")} questions ({SHORTEST} pour une petite partie, {LONGEST} pour une longue).

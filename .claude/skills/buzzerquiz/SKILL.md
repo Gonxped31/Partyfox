@@ -89,8 +89,8 @@ links back to `/`.
 - Two languages: the interface follows each viewer's page language
   (`components/buzzerquiz/text.ts`), the questions the room's `settings.lang`. A new
   room's questions start in the creator's interface language; the host can switch.
-- The bank has 120 questions per topic per language (1,440 in all, 2026-11-16),
-  and the test keeps it there: with `usedQuestionIds`, a single-topic room gets 6
+- The bank has at least 120 questions per topic per language (Anime & manga,
+  added 2026-11-21, has 226 EN and 207 FR), and the test keeps that floor: with `usedQuestionIds`, a single-topic room gets 6
   full games before anything repeats. New questions continue each group's
   numbering (`geo-fr-121`), and none may name another question's answer in the
   same topic and language (`buzzer-quiz-game-design.md`, Content).

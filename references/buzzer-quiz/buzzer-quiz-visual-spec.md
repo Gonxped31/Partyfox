@@ -114,7 +114,7 @@ A 48–52 px bar between the question and the choices, 14 px radius. It always s
 5. **Final ranking:** "Léa wins!" with a 132 px winner avatar and a crown. Ranked list: 1st in the winner's color (64 px), then 58 px rows. Buttons: "Rematch" (primary), "New topics" (2 px cream outline), "Back to Game Room" text link.
 
 ### Desktop (fluid, max content width 1040 px for setup, lobby and end)
-- **Setup:** language and length on the left (300 px+), a 3×2 topic grid of 110 px tiles on the right, a "How scoring works" note under the left column. "Create room" bottom right.
+- **Setup:** language and length on the left (300 px+), a 3-column topic grid of 110 px tiles on the right (a last tile alone on its row fills it, as on the phone's 2 columns), a "How scoring works" note under the left column. "Create room" bottom right.
 - **Waiting room:** players as a 2×2 grid of 120 px cards (60 px avatars) on the left. Invite card, quiz chips and Start in a 320 px column on the right.
 - **Question:** header (game name, question pill, topic, timer). Score column left, main column right: question card, banner, 2×2 choices, buzzer with key hints.
 - **Final ranking:** podium (2nd 150 px, 1st 210 px, 3rd 110 px tall), 4th place row below, buttons centered.

@@ -13,7 +13,7 @@ export const LENGTHS = [5, 10, 15, 20] as const;
 export type GameLength = (typeof LENGTHS)[number];
 export const DEFAULT_LENGTH: GameLength = 10;
 
-export const TOPICS = ["geography", "cinema", "science", "sport", "music", "history"] as const;
+export const TOPICS = ["geography", "cinema", "science", "sport", "music", "history", "anime"] as const;
 export type TopicId = (typeof TOPICS)[number];
 
 export const TOPIC_LABELS: Record<TopicId, Record<Lang, string>> = {
@@ -23,6 +23,7 @@ export const TOPIC_LABELS: Record<TopicId, Record<Lang, string>> = {
   sport: { en: "Sport", fr: "Sport" },
   music: { en: "Music", fr: "Musique" },
   history: { en: "History", fr: "Histoire" },
+  anime: { en: "Anime & manga", fr: "Mangas & animés" },
 };
 
 /** The 3-2-1 before each question. */

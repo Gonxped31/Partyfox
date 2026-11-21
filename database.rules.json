@@ -422,7 +422,7 @@
             "length": { ".validate": "newData.val() == 5 || newData.val() == 10 || newData.val() == 15 || newData.val() == 20" },
             "cards": { ".validate": "newData.val() == true" },
             "topics": {
-              "$i": { ".validate": "$i.matches(/^[0-5]$/) && (newData.val() == 'geography' || newData.val() == 'cinema' || newData.val() == 'science' || newData.val() == 'sport' || newData.val() == 'music' || newData.val() == 'history')" }
+              "$i": { ".validate": "$i.matches(/^[0-6]$/) && (newData.val() == 'geography' || newData.val() == 'cinema' || newData.val() == 'science' || newData.val() == 'sport' || newData.val() == 'music' || newData.val() == 'history' || newData.val() == 'anime')" }
             },
             "$other": { ".validate": false }
           },

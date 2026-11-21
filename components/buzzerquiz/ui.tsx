@@ -106,6 +106,13 @@ export const TOPIC_ICONS: Record<string, ReactNode> = {
       <path d="M4 21h16M5 21V10M9.5 21V10M14.5 21V10M19 21V10M3 10h18L12 3z" />
     </Icon>
   ),
+  // A manga speech bubble with an exclamation mark.
+  anime: (
+    <Icon size={26}>
+      <path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+      <path d="M12 7.5v4M12 14.2v.1" />
+    </Icon>
+  ),
 };
 
 // ---- Avatar -----------------------------------------------------------------------------

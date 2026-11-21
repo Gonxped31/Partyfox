@@ -45,7 +45,7 @@ describe("questions.json", () => {
   });
 
   it("names each question <topic>-<lang>-<number>", () => {
-    const prefix: Record<string, string> = { geography: "geo", cinema: "cin", science: "sci", sport: "spo", music: "mus", history: "his" };
+    const prefix: Record<string, string> = { geography: "geo", cinema: "cin", science: "sci", sport: "spo", music: "mus", history: "his", anime: "ani" };
     for (const q of QUESTIONS) expect(q.id).toMatch(new RegExp(`^${prefix[q.topic]}-${q.lang}-[0-9]{2,3}$`));
   });
 

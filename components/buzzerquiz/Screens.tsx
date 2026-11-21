@@ -168,15 +168,18 @@ function settingsFields({ t, topicLabel, settings, onLang, onTopic, onLength, on
           <span className={`${TEXT} text-[14px] text-[var(--text-muted)]`}>{count === 0 ? t.pickOne : t.picked(count)}</span>
         </div>
         <div className="grid grid-cols-2 gap-2.5 min-[900px]:grid-cols-3">
-          {TOPICS.map((topic) => {
+          {TOPICS.map((topic, i) => {
             const on = settings.topics.includes(topic);
+            // A last tile alone on its row fills it (2 columns on phones, 3 from 900 px).
+            const alone = (cols: number) => i === TOPICS.length - 1 && TOPICS.length % cols === 1;
+            const span = `${alone(2) ? "col-span-2" : ""} ${alone(3) ? "min-[900px]:col-span-3" : alone(2) ? "min-[900px]:col-span-1" : ""}`;
             return (
               <button
                 key={topic}
                 type="button"
                 aria-pressed={on}
                 onClick={() => onTopic(topic)}
-                className={`${DISPLAY} ${FOCUS} relative flex h-[62px] cursor-pointer items-center gap-2.5 rounded-2xl px-3 text-left text-[17px] font-extrabold min-[900px]:h-[110px] min-[900px]:flex-col min-[900px]:items-start min-[900px]:justify-between min-[900px]:p-4`}
+                className={`${DISPLAY} ${FOCUS} ${span} relative flex h-[62px] cursor-pointer items-center gap-2.5 rounded-2xl px-3 text-left text-[17px] font-extrabold min-[900px]:h-[110px] min-[900px]:flex-col min-[900px]:items-start min-[900px]:justify-between min-[900px]:p-4`}
                 style={{ background: on ? "var(--surface-2)" : "var(--surface)", border: `3px solid ${on ? "var(--points)" : "transparent"}`, color: "var(--text)" }}
               >
                 <span style={{ color: on ? "var(--points)" : "var(--text-muted)" }}>{TOPIC_ICONS[topic]}</span>

@@ -21,7 +21,7 @@ import { MARK, PIECE, type Move } from "@/lib/games/regions/play";
 import * as hop from "@/lib/games/lasthop/game";
 import { generateBoard, legalMoves } from "@/lib/games/lasthop/board";
 import { RESULT_MS as WS_RESULT_MS, SCOREBOARD_MS, START_LEAD_MS, STEAL_MS, STEAL_OFFER_MS, TURN_MS } from "@/lib/games/wordscramble/constants";
-import { ANSWER_MS, BUZZ_WINDOW_MS, COUNTDOWN_MS, QUESTION_MS, RESULT_MS } from "@/lib/games/buzzerquiz/constants";
+import { ANSWER_MS, BUZZ_WINDOW_MS, COUNTDOWN_MS, QUESTION_MS, RESULT_MS, TOPICS as QUIZ_TOPICS } from "@/lib/games/buzzerquiz/constants";
 import { borderrunState, lasthopState, regionsState, buzzerquizState, cocounselState, wordscrambleState, dbAs, ftwState, nighthighwayState, ROOM, seedRoom, setupEnv } from "./helpers";
 
 let env: RulesTestEnvironment;
@@ -374,6 +374,10 @@ describe("Buzzer Quiz", () => {
     game = await write(quiz.newTopics({ ...game, phase: "final" }));
     expect(game.phase).toBe("setup");
     expect(quiz.normalize(game).usedQuestionIds).toEqual([...ids, ...more]);
+  });
+
+  it("accepts every topic at once", async () => {
+    await assertSucceeds(dbAs(env, "alice").ref(path).set(buzzerquizState({ settings: { lang: "en", length: 10, topics: [...QUIZ_TOPICS] } })));
   });
 
   it("accepts a seen list as long as the whole question bank", async () => {

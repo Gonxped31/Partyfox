@@ -28,10 +28,11 @@ themselves, the host included.
 | Setting | Values | Default |
 | :--- | :--- | :--- |
 | Language | English, Français | the host's browser language, else English |
-| Topics | one or several of the 6 topics | none: at least 1 is needed |
+| Topics | one or several of the 7 topics | none: at least 1 is needed |
 | Questions | 5, 10, 15, 20 | 10 |
 
-The 6 topics: Geography, Cinema & TV, Science, Sport, Music, History. With several
+The 7 topics: Geography, Cinema & TV, Science, Sport, Music, History, Anime & manga
+(added 2026-11-21). With several
 topics, questions are drawn evenly across them in random order.
 
 The visual spec shows setup *before* the room exists ("Create room"). In Game Room a
@@ -138,7 +139,7 @@ restores them.
 - `lib/games/buzzerquiz/questions.json` (or one file per language), validated by a test.
 - Each question: `{ id, lang, topic, question, choices: [4 strings], answer: 0-3 }`,
   with the right answer listed first in the file and shuffled at play time.
-- 120 questions per topic per language (1,440 in all), so with the room's seen list
+- At least 120 questions per topic per language, so with the room's seen list
   (`usedQuestionIds`) a single-topic room plays 6 full 20-question games before any
   question comes back.
 - Rules for writing questions: one clearly right answer, three plausible wrong ones,
